@@ -12,20 +12,21 @@ def read_input():
     # return both lines in one return
     
     # this is the sample return, notice the rstrip function
-    choice = input().rstrip().lower()
+    choice = input()
+
     if choice == 'I':
         pattern = input().rstrip()
-        text = input().rstrip()
+        string = input().rstrip()
 
     elif choice == 'F':
         with open("tests/06", "r") as file:
             pattern = file.readline().rstrip()
-            text = file.readline().rstrip()
-            
+            string = file.readline().rstrip()
+
     else:
-        return
+        print('wrong input')
     
-    return(pattern,text)
+    return (pattern, string)
 
 def print_occurrences(output):
     # this function should control output, it doesn't need any return
@@ -35,29 +36,31 @@ def get_occurrences(pattern, text):
     # this function should find the occurances using Rabin Karp alghoritm 
 
     # and return an iterable variable
+    pattern_len = len(pattern)
+    text_len = len(text)
+
+    pattern_hash = 0
+    for i in range(pattern_len):
+        pattern_hash += ord(pattern[i]) * pow(101, i)
+
+    window_hash = 0
+    for i in range(pattern_len):
+        window_hash += ord(text[i]) * pow(101, i)
+    
     result = []
-    p_len = len(pattern)
-    t_len = len(text)
-    if p_len > t_len:
-        return result
-    prime = 1000000007
-    x = 263
-    p_hash = 0
-    t_hash = 0
-    x_p = pow(x, p_len, prime)
-    for i in range(p_len):
-        p_hash = (x * p_hash + ord(pattern[i])) % prime
-        t_hash = (x * t_hash + ord(text[i])) % prime
-    if p_hash == t_hash and pattern == text[:p_len]:
+
+    if pattern_hash == window_hash and pattern == text[:pattern_len]:
         result.append(0)
-    for i in range(1, t_len - p_len + 1):
-        t_hash = (t_hash - ord(text[i - 1]) * x_p % prime + prime) % prime
-        t_hash = (t_hash * x + ord(text[i + p_len - 1])) % prime
-        if p_hash == t_hash and pattern == text[i:i+p_len]:
+
+    for i in range(1, text_len - pattern_len + 1):
+        window_hash -= ord(text[i - 1])
+        window_hash //= 101
+        window_hash += ord(text[i + pattern_len - 1]) * pow(101, pattern_len - 1)
+
+        if pattern_hash == window_hash and pattern == text[i:i+pattern_len]:
             result.append(i)
+
     return result
-
-
 
 # this part launches the functions
 if __name__ == '__main__':
