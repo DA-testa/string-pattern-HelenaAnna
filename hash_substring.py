@@ -13,14 +13,19 @@ def read_input():
     
     # this is the sample return, notice the rstrip function
     choice = input().rstrip().lower()
-    if choice == 'i':
+    if choice == 'I':
         pattern = input().rstrip()
         text = input().rstrip()
+
+    elif choice == 'F':
+        with open("tests/06", "r") as file:
+            pattern = file.readline().rstrip()
+            text = file.readline().rstrip()
+            
     else:
-        with open('input.txt', 'r') as f:
-            pattern = f.readline().rstrip()
-            text = f.readline().rstrip()
-    return pattern, text
+        return
+    
+    return(pattern,text)
 
 def print_occurrences(output):
     # this function should control output, it doesn't need any return
